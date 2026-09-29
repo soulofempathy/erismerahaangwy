@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Love Letter</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@200;300;400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===============================================================
+       CINEMATIC GOTHIC MONOCHROME DESIGN SYSTEM
+       Black, Charcoal, Graphite, Silver, Off-White ONLY.
+       =============================================================== */
+    :root {
+      --bg-void: #050505;
+      --bg-obsidian: #0a0a0c;
+      --bg-card: rgba(18, 18, 20, 0.75);
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-silver: rgba(230, 230, 235, 0.22);
+      --border-bright: rgba(255, 255, 255, 0.45);
+      
+      --text-white: #f5f5f7;
+      --text-silver: #c8c8cf;
+      --text-graphite: #7e7e88;
+      --text-dim: #44444a;
+      
+      --font-display: 'Cinzel', serif;
+      --font-body: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-script: 'Pinyon Script', cursive;
+
+      --letterbox-h: clamp(24px, 4.5vh, 48px);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-void);
+      color: var(--text-silver);
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.7;
+      user-select: none;
+    }
+
+    /* Film letterbox bars */
+    .film-bars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .film-bar {
+      width: 100%;
+      height: var(--letterbox-h);
+      background-color: #000000;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    }
+
+    /* Subtle Film Grain, Vignette & Atmosphere */
+    #cinematic-viewport {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+    }
+
+    .camera-frame {
+      position: absolute;
+      inset: -2.5%;
+      width: 105%;
+      height: 105%;
+      pointer-events: none;
+      animation: cameraDrift 28s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    @keyframes cameraDrift {
+      0% { transform: scale(1.0) translate3d(0, 0, 0); }
+      50% { transform: scale(1.02) translate3d(-0.4%, 0.3%, 0); }
+      100% { transform: scale(1.03) translate3d(0.3%, -0.4%, 0); }
+    }
+
+    .vignette-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 15;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(5,5,5,0.7) 75%, #000 100%);
+    }
+
+    .film-grain {
+      position: fixed;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      pointer-events: none;
+      z-index: 16;
+      opacity: 0.038;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      animation: grainJitter 0.8s steps(6) infinite;
+    }
+
+    @keyframes grainJitter {
+      0% { transform: translate(0, 0); }
+      20% { transform: translate(-3%, 2%); }
+      40% { transform: translate(2%, -3%); }
+      60% { transform: translate(-2%, -2%); }
+      80% { transform: translate(3%, 1%); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* Ambient Canvases */
+    #sky-canvas, #rain-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+    #rain-canvas {
+      z-index: 3;
+      opacity: 0.45;
+    }
+
+    /* Scene Transitions & Stage */
+    .film-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(30px, 6vh, 60px) 24px;
+    }
+
+    .film-scene {
+      position: absolute;
+      max-width: 820px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(14px) scale(0.995);
+      filter: blur(8px);
+      transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 1.8s cubic-bezier(0.22, 1, 0.36, 1),
+                  filter 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 1.8s;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .film-scene.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+      pointer-events: auto;
+    }
+
+    /* Screen Blackout Curtain for Film Transitions */
+    #scene-curtain {
+      position: fixed;
+      inset: 0;
+      background-color: #000;
+      z-index: 900;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #scene-curtain.blackout {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Subtitle-Style Narrative Stanzas */
+    .narrative-line {
+      opacity: 0;
+      transform: translateY(12px);
+      filter: blur(4px);
+      transition: opacity 1.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  transform 1.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+                  filter 1.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      margin-bottom: 1.1rem;
+    }
+    .narrative-line.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    /* Typography Hierarchy */
+    h1, .film-title {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(1.8rem, 4.2vw, 2.8rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-white);
+      margin-bottom: 1.8rem;
+      text-shadow: 0 2px 20px rgba(255,255,255,0.08);
+    }
+
+    h2, .film-subtitle {
+      font-family: var(--font-display);
+      font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-silver);
+      margin-bottom: 1.4rem;
+    }
+
+    p.lead-text {
+      font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+      color: #dfdfe6;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.8;
+      max-width: 680px;
+    }
+
+    .meta-label {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.28em;
+      color: var(--text-graphite);
+    }
+
+    /* Film Prologue Intro (Scene 0) */
+    #prologue-sequence {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      z-index: 950;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .prologue-item {
+      opacity: 0;
+      filter: blur(6px);
+      transform: translateY(8px);
+      transition: opacity 1.8s ease, filter 1.8s ease, transform 1.8s ease;
+      position: absolute;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .prologue-item.active {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+
+    /* Minimal Cinematic Controls */
+    .cinematic-hud {
+      position: fixed;
+      bottom: calc(var(--letterbox-h) + 16px);
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 4vw, 50px);
+      pointer-events: none;
+      opacity: 0.6;
+      transition: opacity 0.8s ease;
+    }
+    .cinematic-hud:hover, .cinematic-hud:focus-within {
+      opacity: 0.95;
+    }
+    .cinematic-hud.dimmed {
+      opacity: 0.08 !important;
+      pointer-events: none !important;
+    }
+
+    .hud-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      pointer-events: auto;
+    }
+
+    .hud-btn {
+      background: rgba(15, 15, 18, 0.6);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-silver);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 9px 18px;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+    .hud-btn:hover {
+      border-color: var(--border-silver);
+      color: var(--text-white);
+      background: rgba(30, 30, 35, 0.8);
+      transform: translateY(-1px);
+    }
+    .hud-btn:focus-visible {
+      outline: 1px solid var(--text-silver);
+      outline-offset: 3px;
+    }
+
+    .scene-indicator {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      letter-spacing: 0.28em;
+      color: var(--text-graphite);
+    }
+
+    .primary-film-btn {
+      margin-top: 2.2rem;
+      background: transparent;
+      border: 1px solid var(--border-silver);
+      color: var(--text-white);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      padding: 13px 32px;
+      border-radius: 2px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    .primary-film-btn.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .primary-film-btn:hover {
+      border-color: var(--text-white);
+      background: rgba(255, 255, 255, 0.06);
+      letter-spacing: 0.28em;
+    }
+
+    /* Scene Specific: Physical Envelope */
+    .envelope-chamber {
+      position: relative;
+      width: clamp(280px, 70vw, 420px);
+      height: 270px;
+      margin: 1.5rem auto 1rem;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .envelope-box {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #141416;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.85);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.8s ease;
+    }
+    .envelope-chamber:hover .envelope-box {
+      border-color: var(--border-silver);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.95), 0 0 25px rgba(255,255,255,0.03);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: clamp(140px, 35vw, 210px) solid transparent;
+      border-right: clamp(140px, 35vw, 210px) solid transparent;
+      border-top: 140px solid #1c1c20;
+      transform-origin: top center;
+      transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 5;
+    }
+    .envelope-chamber.opened .envelope-flap {
+      transform: rotateX(175deg);
+    }
+
+    .wax-seal {
+      position: absolute;
+      top: 105px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ececed 0%, #a4a4ab 55%, #5a5a60 100%);
+      border: 1px solid rgba(255,255,255,0.4);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: #1a1a1c;
+      transition: transform 0.6s ease, opacity 0.8s ease;
+    }
+    .envelope-chamber.opened .wax-seal {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.6);
+      pointer-events: none;
+    }
+
+    .envelope-sheet {
+      position: absolute;
+      bottom: 12px;
+      left: 5%;
+      width: 90%;
+      height: 84%;
+      background: #0d0d0f;
+      border: 1px solid var(--border-subtle);
+      padding: 24px;
+      text-align: left;
+      transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0.85;
+    }
+    .envelope-chamber.opened .envelope-sheet {
+      transform: translateY(-90px);
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
+      opacity: 1;
+    }
+
+    /* Photographic Gothic Moon Scene */
+    .moon-stage {
+      position: relative;
+      width: clamp(200px, 32vw, 320px);
+      height: clamp(200px, 32vw, 320px);
+      margin: 1.5rem auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photographic-moon {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 45% 45%, #ffffff 0%, #d8d8de 25%, #888892 60%, #303036 88%, #0e0e12 100%);
+      box-shadow: 0 0 70px rgba(255,255,255,0.12), inset -20px -20px 50px rgba(0,0,0,0.85);
+      filter: contrast(110%);
+    }
+    .moon-haze {
+      position: absolute;
+      inset: -25%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220, 220, 230, 0.08) 0%, transparent 68%);
+      pointer-events: none;
+      animation: hazePulse 12s ease-in-out infinite alternate;
+    }
+    @keyframes hazePulse {
+      0% { transform: scale(0.96); opacity: 0.5; }
+      100% { transform: scale(1.08); opacity: 0.85; }
+    }
+
+    /* Promise Dark Glass Display */
+    .promise-frame {
+      width: 100%;
+      max-width: 640px;
+      min-height: 240px;
+      margin: 1.5rem auto;
+      padding: clamp(24px, 4vw, 40px);
+      background: var(--bg-card);
+      border: 1px solid var(--border-silver);
+      backdrop-filter: blur(16px);
+      border-radius: 2px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .promise-content-wrap {
+      transition: opacity 0.6s ease, transform 0.6s ease, filter 0.6s ease;
+    }
+    .promise-content-wrap.switching {
+      opacity: 0;
+      transform: scale(0.97);
+      filter: blur(5px);
+    }
+    .promise-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 1.5rem;
+    }
+    .promise-nav-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-silver);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      font-size: 0.9rem;
+    }
+    .promise-nav-btn:hover {
+      border-color: var(--text-white);
+      color: var(--text-white);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Poem Frame */
+    .poem-container {
+      max-width: 580px;
+      margin: 1.2rem auto;
+      text-align: center;
+      padding: 0 16px;
+    }
+    .poem-line {
+      font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+      line-height: 2.1;
+      font-style: italic;
+      color: var(--text-white);
+    }
+
+    /* Signature Styling */
+    .script-signature {
+      font-family: var(--font-script);
+      font-size: clamp(2.4rem, 5vw, 3.4rem);
+      color: var(--text-white);
+      letter-spacing: 0.05em;
+      margin-top: 1rem;
+      opacity: 0.95;
+    }
+
+    /* Film Credits Layout */
+    .credits-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+      text-align: center;
+    }
+    .credits-role {
+      font-family: var(--font-sans);
+      font-size: 0.68rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--text-graphite);
+      margin-bottom: 0.3rem;
+    }
+    .credits-name {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      letter-spacing: 0.16em;
+      color: var(--text-white);
+    }
+
+    /* Secret Post-Credit Overlay */
+    .secret-chamber {
+      position: fixed;
+      inset: 0;
+      background: #020202;
+      z-index: 920;
+      opacity: 0;
+      visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      transition: opacity 1.8s ease, visibility 1.8s;
+    }
+    .secret-chamber.revealed {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Audio Player Interface (Minimalist) */
+    .audio-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .audio-bar {
+      width: 2px;
+      height: 10px;
+      background: var(--text-graphite);
+      transition: height 0.3s ease;
+    }
+    .audio-playing .audio-bar:nth-child(1) { animation: soundBar 1.2s infinite ease-in-out; }
+    .audio-playing .audio-bar:nth-child(2) { animation: soundBar 1.2s infinite ease-in-out 0.2s; }
+    .audio-playing .audio-bar:nth-child(3) { animation: soundBar 1.2s infinite ease-in-out 0.4s; }
+
+    @keyframes soundBar {
+      0%, 100% { height: 4px; }
+      50% { height: 14px; background: var(--text-white); }
+    }
+
+    /* Accessibility & Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .camera-frame { animation: none !important; }
+      .film-grain { display: none !important; }
+    }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 640px) {
+      body { font-size: 16px; }
+      .primary-film-btn { padding: 11px 24px; font-size: 0.7rem; }
+      .cinematic-hud { padding: 0 16px; bottom: calc(var(--letterbox-h) + 10px); }
+      .hud-btn { padding: 7px 12px; font-size: 0.65rem; }
+      .envelope-chamber { height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cinematic Letterbox Borders -->
+  <div class="film-bars" aria-hidden="true">
+    <div class="film-bar top"></div>
+    <div class="film-bar bottom"></div>
+  </div>
+
+  <!-- Deep Vignette & Grain Filters -->
+  <div class="vignette-layer" aria-hidden="true"></div>
+  <div class="film-grain" aria-hidden="true"></div>
+
+  <!-- Camera Drift Frame -->
+  <div class="camera-frame">
+    <!-- Starfield & Weather Canvas -->
+    <canvas id="sky-canvas"></canvas>
+    <canvas id="rain-canvas"></canvas>
+  </div>
+
+  <!-- Scene Blackout Curtain for Film Transitions -->
+  <div id="scene-curtain" aria-hidden="true"></div>
+
+  <!-- Film Prologue (Opening sequence) -->
+  <div id="prologue-sequence" role="dialog" aria-modal="true" aria-label="Prologue sequence">
+    <div class="prologue-item" id="prologue-1">
+      <p class="meta-label">A film dedicated to</p>
+      <h1 style="margin-top: 0.8rem;" id="prologue-recipient">HER</h1>
+    </div>
+    <div class="prologue-item" id="prologue-2">
+      <p class="lead-text" style="font-size: 1.25rem;">a quiet thing I wanted you to keep.</p>
+    </div>
+    <div class="prologue-item" id="prologue-3">
+      <button class="primary-film-btn revealed" id="btn-begin-experience">Begin</button>
+    </div>
+  </div>
+
+  <!-- Main Cinematic Stage -->
+  <main class="film-stage" id="main-stage">
+    
+    <!-- Scene 1: Introduction -->
+    <section class="film-scene" id="scene-1" data-scene="1">
+      <p class="meta-label narrative-line">Act I — The Opening</p>
+      <h1 class="narrative-line">Nightfall</h1>
+      <p class="lead-text narrative-line">
+        The noise of the world recedes into graphite and rain.<br>
+        Stay for a moment. There are things I have kept unspoken until now.
+      </p>
+      <button class="primary-film-btn" data-action="next-scene">Step In</button>
+    </section>
+
+    <!-- Scene 2: Interactive Sealed Envelope -->
+    <section class="film-scene" id="scene-2" data-scene="2">
+      <p class="meta-label narrative-line">Act II — The Keepsake</p>
+      <h2 class="narrative-line">A Sealed Letter</h2>
+      <div class="envelope-chamber narrative-line" id="film-envelope" role="button" tabindex="0" aria-label="Open sealed letter">
+        <div class="envelope-box">
+          <div class="envelope-flap"></div>
+          <div class="wax-seal">✦</div>
+          <div class="envelope-sheet">
+            <p class="meta-label" style="font-size: 0.6rem; margin-bottom: 8px;">For Your Eyes Only</p>
+            <p style="font-size: 0.95rem; font-style: italic; color: #ececed;">"I wanted you to have something untouched by time."</p>
+          </div>
+        </div>
+      </div>
+      <p class="meta-label narrative-line" id="envelope-instruction" style="margin-top: 1rem;">Touch the wax seal to break it</p>
+      <button class="primary-film-btn" id="envelope-next-btn" data-action="next-scene" style="display: none;">Read What Follows</button>
+    </section>
+
+    <!-- Scene 3: Unfolding Text Reveal -->
+    <section class="film-scene" id="scene-3" data-scene="3">
+      <p class="meta-label narrative-line">Act III — The Beginning</p>
+      <div class="narrative-stanzas" style="max-width: 660px;">
+        <p class="lead-text narrative-line">
+          Do you remember our first conversation?
+        </p>
+        <p class="narrative-line" style="color: var(--text-silver); font-size: 1.25rem;" id="display-first-convo">
+          It felt like an ordinary afternoon, but the quiet gravity of it never left.
+        </p>
+        <p class="narrative-line" style="color: var(--text-graphite); font-style: italic; font-size: 1.1rem; margin-top: 1.5rem;">
+          You were never just a passerby in my life.
+        </p>
+      </div>
+      <button class="primary-film-btn" data-action="next-scene">Continue</button>
+    </section>
+
+    <!-- Scene 4: Atmospheric Moon -->
+    <section class="film-scene" id="scene-4" data-scene="4">
+      <p class="meta-label narrative-line">Act IV — The Midnight Orbit</p>
+      <div class="moon-stage narrative-line">
+        <div class="moon-haze"></div>
+        <div class="photographic-moon"></div>
+      </div>
+      <p class="lead-text narrative-line">
+        Whenever the world feels unbearable, I search for you the way eyes search for the moon in a starless sky.
+      </p>
+      <button class="primary-film-btn" data-action="next-scene">Follow The Orbit</button>
+    </section>
+
+    <!-- Scene 5: Emotional Center -->
+    <section class="film-scene" id="scene-5" data-scene="5">
+      <p class="meta-label narrative-line">Act V — Sanctuary</p>
+      <div style="max-width: 650px;">
+        <p class="narrative-line lead-text">
+          You became one of the few places my mind goes when it seeks quiet.
+        </p>
+        <p class="narrative-line" style="margin-top: 1.4rem; color: var(--text-silver); font-size: 1.2rem;">
+          Even on the days when silence lingers between us, your existence remains a steady anchor.
+        </p>
+      </div>
+      <button class="primary-film-btn" data-action="next-scene">Listen Closely</button>
+    </section>
+
+    <!-- Scene 6: Interactive Promises -->
+    <section class="film-scene" id="scene-6" data-scene="6">
+      <p class="meta-label narrative-line">Act VI — Quiet Vows</p>
+      <div class="promise-frame narrative-line">
+        <div class="promise-content-wrap" id="promise-display">
+          <p class="meta-label" id="promise-counter" style="margin-bottom: 0.8rem;">Vow I of IV</p>
+          <p class="lead-text" id="promise-text" style="font-size: 1.35rem;">To always give you honesty, even when words are fragile.</p>
+        </div>
+        <div class="promise-nav">
+          <button class="promise-nav-btn" id="promise-prev" aria-label="Previous vow">←</button>
+          <button class="promise-nav-btn" id="promise-next" aria-label="Next vow">→</button>
+        </div>
+      </div>
+      <button class="primary-film-btn" data-action="next-scene">Take Them With You</button>
+    </section>
+
+    <!-- Scene 7: Imagined Moments & Inside Joke -->
+    <section class="film-scene" id="scene-7" data-scene="7">
+      <p class="meta-label narrative-line">Act VII — The Ordinary & Infinite</p>
+      <h2 class="narrative-line">In The Midst of It All</h2>
+      <div style="max-width: 640px;">
+        <p class="narrative-line lead-text" id="display-inside-joke">
+          The shared laughter, the small inside jokes only we know the roots of.
+        </p>
+        <p class="narrative-line" style="margin-top: 1.2rem; color: var(--text-silver); font-size: 1.2rem;">
+          I find myself noticing every ordinary detail when it touches you: coffee cups left half-warm, quiet walks, the late hours when neither of us wants to say goodnight.
+        </p>
+      </div>
+      <button class="primary-film-btn" data-action="next-scene">Deeper</button>
+    </section>
+
+    <!-- Scene 8: The Poem -->
+    <section class="film-scene" id="scene-8" data-scene="8">
+      <p class="meta-label narrative-line">Act VIII — Nocturne</p>
+      <div class="poem-container">
+        <p class="poem-line narrative-line">The night holds no color that belongs to pride,</p>
+        <p class="poem-line narrative-line">Only the quiet tide where memories hide.</p>
+        <p class="poem-line narrative-line">I find you in the hush before the dawn starts to break,</p>
+        <p class="poem-line narrative-line">A promise kept for nobody else's sake.</p>
+      </div>
+      <button class="primary-film-btn" data-action="next-scene">Remain Here</button>
+    </section>
+
+    <!-- Scene 9: Reassurance -->
+    <section class="film-scene" id="scene-9" data-scene="9">
+      <p class="meta-label narrative-line">Act IX — Constancy</p>
+      <div style="max-width: 620px;">
+        <p class="narrative-line lead-text">
+          Whatever shadows arrive, whatever distance stretches between our hands:
+        </p>
+        <p class="narrative-line" style="font-size: 1.4rem; color: var(--text-white); margin-top: 1.5rem; font-style: italic;">
+          I am not going anywhere.
+        </p>
+      </div>
+      <button class="primary-film-btn" data-action="next-scene">The Last Room</button>
+    </section>
+
+    <!-- Scene 10: Final Confession (The Film Peak) -->
+    <section class="film-scene" id="scene-10" data-scene="10">
+      <div style="max-width: 700px; padding: 20px 0;">
+        <p class="narrative-line" style="font-size: 1.3rem; color: var(--text-silver); margin-bottom: 2rem;">
+          If I only had one thing to leave behind in this life,
+        </p>
+        <p class="narrative-line" style="font-size: clamp(1.4rem, 3.2vw, 1.9rem); color: var(--text-white); font-weight: 300; line-height: 1.8;">
+          it would be the absolute certainty that you were loved with patience, with reverence, and with everything I had.
+        </p>
+        <div class="narrative-line" style="margin-top: 2.8rem;">
+          <p class="meta-label">Yours, always,</p>
+          <p class="script-signature" id="display-signature">Arnav</p>
+        </div>
+      </div>
+      <button class="primary-film-btn" id="to-credits-btn" data-action="next-scene">Credits</button>
+    </section>
+
+    <!-- Scene 11: Film Credits -->
+    <section class="film-scene" id="scene-11" data-scene="11">
+      <div class="credits-scroll">
+        <div>
+          <p class="credits-role">Written & Directed For</p>
+          <p class="credits-name" id="credits-recipient">MY BELOVED</p>
+        </div>
+        <div>
+          <p class="credits-role">Composed By</p>
+          <p class="credits-name" id="credits-sender">ARNAV</p>
+        </div>
+        <div>
+          <p class="credits-role">With Eternal Regard</p>
+          <p class="credits-name" style="font-family: var(--font-body); font-style: italic; font-size: 1.1rem; color: var(--text-silver);">
+            Too much time, and too many unwritten thoughts.
+          </p>
+        </div>
+      </div>
+      <div style="margin-top: 3.5rem; display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+        <button class="hud-btn" id="btn-secret-postcredits">One Last Thing...</button>
+        <button class="hud-btn" id="btn-replay-film">Replay From The Start</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Secret Post-Credits Room -->
+  <div class="secret-chamber" id="secret-overlay" role="dialog" aria-modal="true" aria-label="Secret message">
+    <div style="max-width: 580px; text-align: center;">
+      <p class="meta-label" style="margin-bottom: 1.5rem;">Post Scriptum</p>
+      <p class="lead-text" id="display-secret-message" style="color: var(--text-white); margin-bottom: 2rem;">
+        "I’d choose you in every version of this world, over and over, without hesitation."
+      </p>
+      <button class="hud-btn" id="btn-close-secret">Return</button>
+    </div>
+  </div>
+
+  <!-- Cinematic Bottom HUD -->
+  <div class="cinematic-hud" id="hud-bar">
+    <div class="scene-indicator" id="hud-scene-counter">SCENE I / XI</div>
+    
+    <div class="hud-controls-group">
+      <button class="hud-btn" id="btn-audio-toggle" aria-label="Toggle Soundtrack">
+        <span class="audio-indicator" id="audio-visualizer" style="margin-right: 8px;">
+          <span class="audio-bar"></span>
+          <span class="audio-bar"></span>
+          <span class="audio-bar"></span>
+        </span>
+        <span id="audio-label">Soundtrack: Muted</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Ambient Audio Elements with Fallback Synthesis -->
+  <audio id="audio-theme" loop preload="none">
+    <!-- Optional external tracks can be added here -->
+    <source src="assets/cinematic_theme.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    /* ===============================================================
+       CONFIGURATION & PERSONALIZATION
+       =============================================================== */
+    const CONFIG = {
+      recipientName: "My Love",
+      senderName: "Arnav",
+      signature: "Arnav",
+      firstConversation: "A quiet conversation that turned an ordinary evening into the start of everything.",
+      insideJoke: "The quiet smiles we trade when nobody else in the room knows what we're thinking.",
+      secretMessage: "I would choose you in every lifetime, in every dark and quiet room, without hesitation.",
+      promises: [
+        { title: "Vow I of IV", text: "To give you an honest haven when the noise of the world becomes deafening." },
+        { title: "Vow II of IV", text: "To listen to your silences just as deeply as your words." },
+        { title: "Vow III of IV", text: "To never make you feel like your tenderness is something you must apologize for." },
+        { title: "Vow IV of IV", text: "To remain steady, even when the night is long and the way forward is shadowed." }
+      ]
+    };
+
+    /* ===============================================================
+       CINEMATIC FILM STATE CONTROLLER
+       =============================================================== */
+    const FilmState = {
+      currentScene: 1,
+      totalScenes: 11,
+      isTransitioning: false,
+      isEnvelopeOpen: false,
+      currentPromiseIdx: 0,
+      audioEnabled: false,
+      synthAudioCtx: null,
+      synthOscillator: null,
+      synthGainNode: null
+    };
+
+    // DOM Elements Cache
+    const DOM = {
+      scenes: document.querySelectorAll('.film-scene'),
+      curtain: document.getElementById('scene-curtain'),
+      hud: document.getElementById('hud-bar'),
+      sceneCounter: document.getElementById('hud-scene-counter'),
+      prologue: document.getElementById('prologue-sequence'),
+      envelope: document.getElementById('film-envelope'),
+      envelopeNext: document.getElementById('envelope-next-btn'),
+      envelopeInstruction: document.getElementById('envelope-instruction'),
+      audioToggle: document.getElementById('btn-audio-toggle'),
+      audioLabel: document.getElementById('audio-label'),
+      audioVisualizer: document.getElementById('audio-visualizer'),
+      audioElement: document.getElementById('audio-theme'),
+      promiseText: document.getElementById('promise-text'),
+      promiseCounter: document.getElementById('promise-counter'),
+      promiseDisplay: document.getElementById('promise-display'),
+      promisePrev: document.getElementById('promise-prev'),
+      promiseNext: document.getElementById('promise-next'),
+      secretChamber: document.getElementById('secret-overlay'),
+      btnSecret: document.getElementById('btn-secret-postcredits'),
+      btnCloseSecret: document.getElementById('btn-close-secret'),
+      btnReplay: document.getElementById('btn-replay-film')
+    };
+
+    // Initialize Persona and Configuration
+    function applyPersonalization() {
+      if (CONFIG.recipientName) {
+        document.getElementById('prologue-recipient').textContent = CONFIG.recipientName.toUpperCase();
+        document.getElementById('credits-recipient').textContent = CONFIG.recipientName.toUpperCase();
+      }
+      if (CONFIG.senderName) {
+        document.getElementById('credits-sender').textContent = CONFIG.senderName.toUpperCase();
+      }
+      if (CONFIG.signature) {
+        document.getElementById('display-signature').textContent = CONFIG.signature;
+      }
+      if (CONFIG.firstConversation) {
+        document.getElementById('display-first-convo').textContent = CONFIG.firstConversation;
+      }
+      if (CONFIG.insideJoke) {
+        document.getElementById('display-inside-joke').textContent = CONFIG.insideJoke;
+      }
+      if (CONFIG.secretMessage) {
+        document.getElementById('display-secret-message').textContent = `"${CONFIG.secretMessage}"`;
+      }
+    }
+
+    /* ===============================================================
+       PROLOGUE & FILM INTRO
+       =============================================================== */
+    function runPrologue() {
+      const p1 = document.getElementById('prologue-1');
+      const p2 = document.getElementById('prologue-2');
+      const p3 = document.getElementById('prologue-3');
+
+      setTimeout(() => p1.classList.add('active'), 800);
+      setTimeout(() => {
+        p1.classList.remove('active');
+        setTimeout(() => p2.classList.add('active'), 1200);
+      }, 3400);
+      setTimeout(() => {
+        p2.classList.remove('active');
+        setTimeout(() => p3.classList.add('active'), 1200);
+      }, 6400);
+
+      document.getElementById('btn-begin-experience').addEventListener('click', () => {
+        DOM.prologue.style.opacity = '0';
+        setTimeout(() => {
+          DOM.prologue.style.display = 'none';
+          activateScene(1);
+        }, 2200);
+      });
+    }
+
+    /* ===============================================================
+       CINEMATIC SCENE TRANSITIONS
+       Fade out -> Blackout pause -> Reveal with subtle staggered subtitles
+       =============================================================== */
+    function activateScene(targetSceneNumber) {
+      if (FilmState.isTransitioning) return;
+      FilmState.isTransitioning = true;
+
+      // Update HUD counter
+      DOM.sceneCounter.textContent = `SCENE ${getRomanNumeral(targetSceneNumber)} / XI`;
+
+      // Silence or quieten at Emotional Peak (Scene 10)
+      if (targetSceneNumber === 10) {
+        setMusicVolume(0.12);
+        DOM.hud.classList.add('dimmed');
+      } else {
+        setMusicVolume(0.45);
+        DOM.hud.classList.remove('dimmed');
+      }
+
+      // 1. Blackout screen slowly
+      DOM.curtain.classList.add('blackout');
+
+      setTimeout(() => {
+        // Deactivate all scenes
+        DOM.scenes.forEach(s => {
+          s.classList.remove('active');
+          s.querySelectorAll('.narrative-line, .primary-film-btn').forEach(el => {
+            el.classList.remove('revealed');
+          });
+        });
+
+        // Activate new scene
+        const targetScene = document.getElementById(`scene-${targetSceneNumber}`);
+        if (targetScene) {
+          targetScene.classList.add('active');
+          FilmState.currentScene = targetSceneNumber;
+        }
+
+        // Lift blackout curtain
+        setTimeout(() => {
+          DOM.curtain.classList.remove('blackout');
+
+          // Subtitle-style staggered reveal
+          if (targetScene) {
+            const lines = targetScene.querySelectorAll('.narrative-line');
+            lines.forEach((line, idx) => {
+              setTimeout(() => {
+                line.classList.add('revealed');
+              }, 400 + (idx * 900)); // Deliberate slow pacing
+            });
+
+            // Reveal action button after writing has settled
+            const actionBtn = targetScene.querySelector('.primary-film-btn');
+            if (actionBtn && actionBtn.id !== 'envelope-next-btn') {
+              setTimeout(() => {
+                actionBtn.classList.add('revealed');
+              }, 600 + (lines.length * 900));
+            }
+          }
+
+          FilmState.isTransitioning = false;
+        }, 900);
+
+      }, 1000);
+    }
+
+    function getRomanNumeral(num) {
+      const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+      return roman[num - 1] || `${num}`;
+    }
+
+    /* ===============================================================
+       SCENE 2: INTERACTIVE PHYSICAL ENVELOPE
+       =============================================================== */
+    function setupEnvelope() {
+      DOM.envelope.addEventListener('click', openEnvelope);
+      DOM.envelope.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openEnvelope();
+        }
+      });
+    }
+
+    function openEnvelope() {
+      if (FilmState.isEnvelopeOpen) return;
+      FilmState.isEnvelopeOpen = true;
+      DOM.envelope.classList.add('opened');
+      DOM.envelopeInstruction.textContent = "The seal is lifted.";
+      
+      setTimeout(() => {
+        DOM.envelopeNext.style.display = 'inline-block';
+        setTimeout(() => DOM.envelopeNext.classList.add('revealed'), 100);
+      }, 1400);
+    }
+
+    /* ===============================================================
+       SCENE 6: PROMISES / QUIET VOWS
+       =============================================================== */
+    function setupPromises() {
+      renderPromise();
+      DOM.promiseNext.addEventListener('click', () => {
+        switchPromise((FilmState.currentPromiseIdx + 1) % CONFIG.promises.length);
+      });
+      DOM.promisePrev.addEventListener('click', () => {
+        switchPromise((FilmState.currentPromiseIdx - 1 + CONFIG.promises.length) % CONFIG.promises.length);
+      });
+    }
+
+    function switchPromise(nextIdx) {
+      DOM.promiseDisplay.classList.add('switching');
+      setTimeout(() => {
+        FilmState.currentPromiseIdx = nextIdx;
+        renderPromise();
+        DOM.promiseDisplay.classList.remove('switching');
+      }, 600);
+    }
+
+    function renderPromise() {
+      const p = CONFIG.promises[FilmState.currentPromiseIdx];
+      DOM.promiseCounter.textContent = p.title;
+      DOM.promiseText.textContent = p.text;
+    }
+
+    /* ===============================================================
+       CINEMATIC SOUNDTRACK / GOTHIC AMBIENCE
+       Uses web audio synthetic drone if local file is unavailable.
+       =============================================================== */
+    function setupAudio() {
+      DOM.audioToggle.addEventListener('click', () => {
+        if (!FilmState.audioEnabled) {
+          startAudio();
+        } else {
+          stopAudio();
+        }
+      });
+    }
+
+    function startAudio() {
+      FilmState.audioEnabled = true;
+      DOM.audioLabel.textContent = "Soundtrack: Ambient";
+      DOM.audioVisualizer.classList.add('audio-playing');
+
+      // Attempt to play existing audio element
+      const playPromise = DOM.audioElement.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If local audio file is missing or blocked, provide generative gothic chord drone
+          startSyntheticAmbience();
+        });
+      }
+    }
+
+    function stopAudio() {
+      FilmState.audioEnabled = false;
+      DOM.audioLabel.textContent = "Soundtrack: Muted";
+      DOM.audioVisualizer.classList.remove('audio-playing');
+      try { DOM.audioElement.pause(); } catch(e) {}
+      stopSyntheticAmbience();
+    }
+
+    function startSyntheticAmbience() {
+      try {
+        if (!FilmState.synthAudioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          FilmState.synthAudioCtx = new AudioContext();
+        }
+        if (FilmState.synthAudioCtx.state === 'suspended') {
+          FilmState.synthAudioCtx.resume();
+        }
+
+        const ctx = FilmState.synthAudioCtx;
+        FilmState.synthGainNode = ctx.createGain();
+        FilmState.synthGainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+        FilmState.synthGainNode.gain.exponentialRampToValueAtTime(0.04, ctx.currentTime + 4);
+        FilmState.synthGainNode.connect(ctx.destination);
+
+        // Low gothic drone note (D2 ~ 73.42Hz)
+        FilmState.synthOscillator = ctx.createOscillator();
+        FilmState.synthOscillator.type = 'sine';
+        FilmState.synthOscillator.frequency.setValueAtTime(73.42, ctx.currentTime);
+        FilmState.synthOscillator.connect(FilmState.synthGainNode);
+        FilmState.synthOscillator.start();
+      } catch (e) {
+        // Fallback gracefully without breaking page
+      }
+    }
+
+    function stopSyntheticAmbience() {
+      if (FilmState.synthGainNode && FilmState.synthAudioCtx) {
+        try {
+          FilmState.synthGainNode.gain.exponentialRampToValueAtTime(0.0001, FilmState.synthAudioCtx.currentTime + 1);
+          setTimeout(() => {
+            if (FilmState.synthOscillator) FilmState.synthOscillator.stop();
+          }, 1100);
+        } catch(e) {}
+      }
+    }
+
+    function setMusicVolume(vol) {
+      if (DOM.audioElement) {
+        try { DOM.audioElement.volume = vol; } catch(e) {}
+      }
+      if (FilmState.synthGainNode && FilmState.synthAudioCtx) {
+        try {
+          FilmState.synthGainNode.gain.setTargetAtTime(vol * 0.05, FilmState.synthAudioCtx.currentTime, 1.2);
+        } catch(e) {}
+      }
+    }
+
+    /* ===============================================================
+       ATMOSPHERIC CANVAS: STARS & DELICATE RAIN
+       =============================================================== */
+    function initAtmosphere() {
+      const skyCanvas = document.getElementById('sky-canvas');
+      const rainCanvas = document.getElementById('rain-canvas');
+      const skyCtx = skyCanvas.getContext('2d');
+      const rainCtx = rainCanvas.getContext('2d');
+
+      let width, height;
+      function resize() {
+        width = skyCanvas.width = rainCanvas.width = window.innerWidth;
+        height = skyCanvas.height = rainCanvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Subtle Stars
+      const stars = Array.from({ length: 48 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 0.9 + 0.3,
+        alpha: Math.random() * 0.45 + 0.1,
+        speed: Math.random() * 0.008 + 0.002
+      }));
+
+      // Multi-depth rain streaks
+      const rainDrops = Array.from({ length: 55 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        length: Math.random() * 22 + 12,
+        speed: Math.random() * 4 + 5,
+        alpha: Math.random() * 0.28 + 0.08
+      }));
+
+      let isPageVisible = true;
+      document.addEventListener('visibilitychange', () => {
+        isPageVisible = !document.hidden;
+      });
+
+      function renderFrame() {
+        if (isPageVisible) {
+          // Render sky/stars
+          skyCtx.clearRect(0, 0, width, height);
+          stars.forEach(star => {
+            star.alpha += Math.sin(Date.now() * star.speed) * 0.004;
+            const a = Math.max(0.05, Math.min(0.65, star.alpha));
+            skyCtx.fillStyle = `rgba(235, 235, 240, ${a})`;
+            skyCtx.beginPath();
+            skyCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            skyCtx.fill();
+          });
+
+          // Render rain streaks
+          rainCtx.clearRect(0, 0, width, height);
+          rainCtx.strokeStyle = 'rgba(210, 210, 220, 0.2)';
+          rainCtx.lineWidth = 1;
+          rainCtx.beginPath();
+          rainDrops.forEach(drop => {
+            rainCtx.moveTo(drop.x, drop.y);
+            rainCtx.lineTo(drop.x - 2, drop.y + drop.length);
+            drop.y += drop.speed;
+            drop.x -= 0.6;
+            if (drop.y > height) {
+              drop.y = -20;
+              drop.x = Math.random() * width;
+            }
+          });
+          rainCtx.stroke();
+        }
+        requestAnimationFrame(renderFrame);
+      }
+      requestAnimationFrame(renderFrame);
+    }
+
+    /* ===============================================================
+       EVENT DELEGATION & NAVIGATION
+       =============================================================== */
+    function setupInteractions() {
+      // Step buttons navigation
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action="next-scene"]');
+        if (btn) {
+          if (FilmState.currentScene < FilmState.totalScenes) {
+            activateScene(FilmState.currentScene + 1);
+          }
+        }
+      });
+
+      // Post credits secret interaction
+      DOM.btnSecret.addEventListener('click', () => {
+        DOM.secretChamber.classList.add('revealed');
+      });
+      DOM.btnCloseSecret.addEventListener('click', () => {
+        DOM.secretChamber.classList.remove('revealed');
+      });
+
+      // Replay Film
+      DOM.btnReplay.addEventListener('click', () => {
+        FilmState.isEnvelopeOpen = false;
+        DOM.envelope.classList.remove('opened');
+        DOM.envelopeNext.style.display = 'none';
+        DOM.envelopeInstruction.textContent = "Touch the wax seal to break it";
+        activateScene(1);
+      });
+
+      // Keyboard arrow navigation
+      window.addEventListener('keydown', (e) => {
+        if (DOM.secretChamber.classList.contains('revealed')) {
+          if (e.key === 'Escape') DOM.secretChamber.classList.remove('revealed');
+          return;
+        }
+        if (e.key === 'ArrowRight' && FilmState.currentScene < FilmState.totalScenes && !FilmState.isTransitioning) {
+          // Check if envelope scene requires opening first
+          if (FilmState.currentScene === 2 && !FilmState.isEnvelopeOpen) return;
+          activateScene(FilmState.currentScene + 1);
+        } else if (e.key === 'ArrowLeft' && FilmState.currentScene > 1 && !FilmState.isTransitioning) {
+          activateScene(FilmState.currentScene - 1);
+        }
+      });
+    }
+
+    /* ===============================================================
+       INITIALIZATION
+       =============================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      applyPersonalization();
+      setupEnvelope();
+      setupPromises();
+      setupAudio();
+      initAtmosphere();
+      setupInteractions();
+      runPrologue();
+    });
+  </script>
+</body>
+</html>
